@@ -42,7 +42,13 @@ async function run() {
 
         // get services from DB
         app.get('/listing', async (req, res) =>{
-            const result = await petListing.find().toArray();
+            const {category} = req.query;
+            
+            const query = {}
+            if(category){
+                query.category = category;
+            }
+            const result = await petListing.find(query).toArray();
             res.send(result)
         })
 
@@ -53,6 +59,31 @@ async function run() {
             const result = await petListing.findOne(query)
             res.send(result)
 
+        })
+
+        app.get('/mylisting', async (req, res) =>{
+            const {email} = req.query
+            const query = {email: email}
+            const result = await petListing.find(query).toArray()
+            res.send(result)
+        })
+
+        app.put('/update/:id', async(req, res) =>{
+            const data = req.body;
+            const id = req.params
+            const query = {_id: new ObjectId(id)}
+            const updateListing = {
+                $set: data
+            }
+            const result = await petListing.updateOne(query, updateListing)
+            res.send(result)
+        })
+
+        app.delete('/delete/:id', async (req, res) =>{
+            const id = req.params
+            const query = {_id: new ObjectId(id)}
+            const result = await petListing.deleteOne(query)
+            res.send(result)
         })
 
         await client.db("admin").command({ ping: 1 });
