@@ -27,6 +27,7 @@ async function run() {
 
         const database = client.db('petListing');
         const petListing = database.collection('listing');
+        const orderCollections = database.collection('orders');
 
 
         // post or save service to DB
@@ -41,37 +42,45 @@ async function run() {
         })
 
         // get services from DB
-        app.get('/listing', async (req, res) =>{
-            const {category} = req.query;
-            
-            const query = {}
-            if(category){
+        app.get('/listing', async (req, res) => {
+            const { category, limit } = req.query;
+
+            const query = {};
+            if (category) {
                 query.category = category;
             }
-            const result = await petListing.find(query).toArray();
-            res.send(result)
+
+            let cursor = petListing.find(query);
+
+            // if limit provided apply limit
+            if (limit) {
+                cursor = cursor.limit(parseInt(limit));
+            }
+
+            const result = await cursor.toArray();
+            res.send(result);
         })
 
-        app.get('/listing/:id', async (req, res) =>{
+        app.get('/listing/:id', async (req, res) => {
             const id = req.params
             console.log(id);
-            const query = {_id: new ObjectId(id)}
+            const query = { _id: new ObjectId(id) }
             const result = await petListing.findOne(query)
             res.send(result)
 
         })
 
-        app.get('/mylisting', async (req, res) =>{
-            const {email} = req.query
-            const query = {email: email}
+        app.get('/mylisting', async (req, res) => {
+            const { email } = req.query
+            const query = { email: email }
             const result = await petListing.find(query).toArray()
             res.send(result)
         })
 
-        app.put('/update/:id', async(req, res) =>{
+        app.put('/update/:id', async (req, res) => {
             const data = req.body;
             const id = req.params
-            const query = {_id: new ObjectId(id)}
+            const query = { _id: new ObjectId(id) }
             const updateListing = {
                 $set: data
             }
@@ -79,11 +88,23 @@ async function run() {
             res.send(result)
         })
 
-        app.delete('/delete/:id', async (req, res) =>{
+        app.delete('/delete/:id', async (req, res) => {
             const id = req.params
-            const query = {_id: new ObjectId(id)}
+            const query = { _id: new ObjectId(id) }
             const result = await petListing.deleteOne(query)
             res.send(result)
+        })
+
+        app.post('/orders', async (req, res) => {
+            const data = req.body;
+            console.log(data);
+            const result = await orderCollections.insertOne(data)
+            res.status(201).send(result)
+        })
+
+        app.get('/orders', async(req, res) =>{
+            const result = await orderCollections.find().toArray();
+            res.status(200).send(result)
         })
 
         await client.db("admin").command({ ping: 1 });
