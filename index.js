@@ -70,12 +70,7 @@ async function run() {
 
         })
 
-        app.get('/mylisting', async (req, res) => {
-            const { email } = req.query
-            const query = { email: email }
-            const result = await petListing.find(query).toArray()
-            res.send(result)
-        })
+        
 
         app.put('/update/:id', async (req, res) => {
             const data = req.body;
