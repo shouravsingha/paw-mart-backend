@@ -11,7 +11,7 @@ app.use(express.json())
 
 const uri = "mongodb+srv://PawMart:RULHgSZRXMl0X4Fi@cluster0.vqipep0.mongodb.net/?appName=Cluster0";
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+
 const client = new MongoClient(uri, {
     serverApi: {
         version: ServerApiVersion.v1,
@@ -52,7 +52,7 @@ async function run() {
 
             let cursor = petListing.find(query);
 
-            // if limit provided apply limit
+            
             if (limit) {
                 cursor = cursor.limit(parseInt(limit));
             }
@@ -80,7 +80,7 @@ async function run() {
         app.put('/update/:id', async (req, res) => {
             const data = req.body;
             const id = req.params
-            const query = { _id: new ObjectId(id) }
+            const query = {_id: new ObjectId(id)}
             const updateListing = {
                 $set: data
             }
@@ -90,7 +90,7 @@ async function run() {
 
         app.delete('/delete/:id', async (req, res) => {
             const id = req.params
-            const query = { _id: new ObjectId(id) }
+            const query = {_id: new ObjectId(id) }
             const result = await petListing.deleteOne(query)
             res.send(result)
         })
@@ -99,7 +99,7 @@ async function run() {
             const data = req.body;
             console.log(data);
             const result = await orderCollections.insertOne(data)
-            res.status(201).send(result)
+            res.status(201).send(result);
         })
 
         app.get('/orders', async(req, res) =>{
