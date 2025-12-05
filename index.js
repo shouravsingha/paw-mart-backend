@@ -43,19 +43,7 @@ async function run() {
 
         // get services from DB
         app.get('/listing', async (req, res) => {
-            const { category, limit } = req.query;
-
-            const query = {};
-            if (category) {
-                query.category = category;
-            }
-
-            let cursor = petListing.find(query);
-
             
-            if (limit) {
-                cursor = cursor.limit(parseInt(limit));
-            }
 
             const result = await cursor.toArray();
             res.send(result);
