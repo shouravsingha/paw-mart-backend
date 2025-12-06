@@ -2,14 +2,14 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config()
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 const app = express()
 app.use(cors())
 app.use(express.json())
 
 
-const uri = "mongodb+srv://PawMart:RULHgSZRXMl0X4Fi@cluster0.vqipep0.mongodb.net/?appName=Cluster0";
+const uri = `mongodb+srv://${process.env.Db_USER}:${process.env.DB_PASS}@cluster0.vqipep0.mongodb.net/?appName=Cluster0`;
 
 
 const client = new MongoClient(uri, {
@@ -23,7 +23,7 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
 
-        await client.connect();
+        // await client.connect();
 
         const database = client.db('petListing');
         const petListing = database.collection('listing');
@@ -107,7 +107,7 @@ async function run() {
             res.status(200).send(result)
         })
 
-        await client.db("admin").command({ ping: 1 });
+        // await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
 
